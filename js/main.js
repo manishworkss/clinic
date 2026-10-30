@@ -232,3 +232,53 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
+
+
+// ===== Disease Image Lightbox Modal =====
+function initLightbox() {
+  let lightbox = document.querySelector('.image-lightbox');
+  if (!lightbox) {
+    lightbox = document.createElement('div');
+    lightbox.className = 'image-lightbox';
+    lightbox.innerHTML = `
+      <div class="lightbox-container">
+        <button class="lightbox-close" aria-label="Close">&times;</button>
+        <img class="lightbox-img" src="" alt="Clinical Case Full View">
+        <div class="lightbox-caption"></div>
+        <div class="lightbox-subcaption"></div>
+      </div>
+    `;
+    document.body.appendChild(lightbox);
+
+    const closeBtn = lightbox.querySelector('.lightbox-close');
+    closeBtn.addEventListener('click', () => lightbox.classList.remove('active'));
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) lightbox.classList.remove('active');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+        lightbox.classList.remove('active');
+      }
+    });
+  }
+
+  const clickableWraps = document.querySelectorAll('.result-img-wrap, [data-lightbox]');
+  clickableWraps.forEach(wrap => {
+    wrap.addEventListener('click', () => {
+      const img = wrap.querySelector('img') || wrap;
+      const src = img.getAttribute('src');
+      const title = wrap.getAttribute('data-title') || img.getAttribute('alt') || 'Clinical Result - Alka Clinic';
+      const detail = wrap.getAttribute('data-detail') || 'Real patient recovery at Alka Clinic (Vadodara)';
+
+      lightbox.querySelector('.lightbox-img').src = src;
+      lightbox.querySelector('.lightbox-caption').textContent = title;
+      lightbox.querySelector('.lightbox-subcaption').textContent = detail;
+      lightbox.classList.add('active');
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initLightbox);
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  initLightbox();
+}
